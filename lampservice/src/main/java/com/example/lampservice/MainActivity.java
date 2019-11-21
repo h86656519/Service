@@ -23,7 +23,8 @@ public class MainActivity extends AppCompatActivity {
 
         Calendar begin = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
         Calendar end = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
-        end.add(Calendar.DATE, 1);
+//        end.add(Calendar.DATE, 1);
+        end.add(Calendar.MINUTE, 1);
         startLampService(begin.getTime(),end.getTime(),true);
     }
 
@@ -39,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         lampIntent.setClass(MainActivity.this, LampService.class);
         lampIntent.putExtra("begin", beginString);
         lampIntent.putExtra("end", endString);
-        lampIntent.getBooleanExtra("state", state); //開燈為true，關燈為false
+        lampIntent.putExtra("state", state); //開燈為true，關燈為false
 
         startService(lampIntent);
     }
