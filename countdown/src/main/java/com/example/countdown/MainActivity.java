@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+
 public class MainActivity extends AppCompatActivity implements ServiceConnection {
     EditText editText;
     Button button;
@@ -41,10 +42,9 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                 int inputtime = Integer.valueOf(editText.getText().toString());
                 i.putExtra("time", inputtime);
                 startService(i);
-                bindService(i, MainActivity.this, BIND_AUTO_CREATE);
+                bindService(i, MainActivity.this, BIND_AUTO_CREATE); //MainActivity 要implements ServiceConnection，不然第二個參數會出錯
             }
         });
-
     }
 
     @Override

@@ -1,2 +1,2 @@
-include ':app', ':countdown'
+include ':app', ':countdown', ':lampservice'
 rootProject.name='Service'
