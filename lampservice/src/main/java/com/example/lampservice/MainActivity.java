@@ -2,6 +2,8 @@ package com.example.lampservice;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,29 +27,48 @@ public class MainActivity extends AppCompatActivity {
         Calendar end = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
 //        end.add(Calendar.DATE, 1);
         end.add(Calendar.MINUTE, 1);
-        startLampService(begin.getTime(),end.getTime(),true);
+        startLampService(begin.getTime(), end.getTime(), true);
     }
 
+    //region 開/關燈Service
     private void startLampService(Date begin, Date end, boolean state) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//進行轉換
         String beginString = sdf.format(begin);
         String endString = sdf.format(end);
-        Log.i(TAG, "beginString: " + beginString);
-        Log.i(TAG, "endString: " + endString);
-
         lampIntent = new Intent();
-        lampIntent.setClass(MainActivity.this, LampService.class);
+        lampIntent.setClass(this, LampService.class);
         lampIntent.putExtra("begin", beginString);
         lampIntent.putExtra("end", endString);
-        lampIntent.putExtra("state", state); //開燈為true，關燈為false
+        lampIntent.putExtra("lampState", state); //開燈為true，關燈為false
 
         startService(lampIntent);
     }
 
+    public void stopLampService() {
+        if (isServiceRunning(LampService.class) && lampIntent != null) {
+            stopService(lampIntent);//確保service關閉
+        }
+    }
+    //endregion
+
+    //確認Service 是否存在
+    private boolean isServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //region 銷毀
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        stopService(lampIntent);
+        if (lampIntent != null)
+            stopService(lampIntent);
+
     }
+    //endregion
 }
